@@ -19,6 +19,7 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
     db.app = app
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     app.register_blueprint(auth)
     app.register_blueprint(bookmarks)
