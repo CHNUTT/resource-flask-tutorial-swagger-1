@@ -1,4 +1,3 @@
-from os import access
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 import validators
@@ -83,4 +82,15 @@ def me():
     return jsonify({
         'username': user.username,
         'email': user.email
+    }), HTTP_200_OK
+
+
+@auth.post('/token/refresh')
+@jwt_required(refresh=True)
+def refresh_user_token():
+    identity = get_jwt_identity()
+    access = create_access_token(identity=identity)
+
+    return jsonify({
+        'access': access
     }), HTTP_200_OK
