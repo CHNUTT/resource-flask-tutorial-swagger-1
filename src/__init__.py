@@ -1,8 +1,9 @@
 # factory file
-from flask import Flask, redirect
+from flask import Flask, redirect, jsonify
 import os
 from src.auth import auth
 from src.bookmarks import bookmarks
+from src.constants.http_status_codes import HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 from src.database import Bookmark, db
 from flask_jwt_extended import JWTManager
 
@@ -40,5 +41,13 @@ def create_app(test_config=None):
             db.session.commit()
 
             return redirect(bookmark.url)
+
+    @app.errorhandler(HTTP_404_NOT_FOUND)
+    def handle_404(e):
+        return jsonify({'error': 'Not found'}), HTTP_404_NOT_FOUND
+
+    @app.errorhandler(HTTP_500_INTERNAL_SERVER_ERROR)
+    def handle_500(e):
+        return jsonify({'error': 'Internal Server Error'}), HTTP_500_INTERNAL_SERVER_ERROR
 
     return app
